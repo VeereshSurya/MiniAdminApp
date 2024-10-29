@@ -1,0 +1,13 @@
+#login {
+    background-color: #f8f9fa;
+    min-height: 100vh; /* Ensure it takes full viewport height */
+    display: flex; /* Use flexbox for centering */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+.login-card {
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}

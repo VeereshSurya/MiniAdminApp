@@ -1,0 +1,175 @@
+<div class="card">
+
+    <p-toast [position]="'top-center'"></p-toast>
+  
+    <p-table #dt [columns]="columns" [value]="poems" [rowHover]="true" [paginator]="true" [rows]="5"
+      [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [rowsPerPageOptions]="[5, 10, 20]" [loading]="loading" [(selection)]="selectedPoems" dataKey="Name"
+      [selectionPageOnly]="true" [scrollable]="true" scrollHeight="500px" [resizableColumns]="true"
+      columnResizeMode="expand" [filterDelay]="0" [globalFilterFields]="['Title']"
+      [exportHeader]="'customExportHeader'" [tableStyle]="{ 'min-width': '50rem' }">
+  
+  
+      <ng-template pTemplate="caption">
+        <div style="text-align: left">
+          <p-button icon="pi pi-file-excel" label="Export" (onClick)="dt.exportCSV()" />
+  
+          <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2"
+            (click)="openNew()"></button>
+          <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger"
+            (click)="deleteSelectedPoems()" [disabled]="!selectedPoems || !selectedPoems.length"></button>
+        </div>
+  
+  
+      </ng-template>
+  
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width: 3rem">
+            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+          </th>
+          <th *ngFor="let col of columns" [pSortableColumn]="col.sortable ? col.field : null" [style.width]="col.width">
+            {{ col.header }}
+            <ng-container *ngIf="col.sortable">
+              <p-sortIcon [field]="col.field"></p-sortIcon>
+            </ng-container>
+          </th>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="body" let-poem let-columns="columns">
+        <tr>
+          <td>
+            <p-tableCheckbox [value]="poem"></p-tableCheckbox>
+          </td>
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.field !== 'coverImageUrl' && col.field !== 'publishedAt'">
+              {{ poem[col.field] }}
+            </ng-container>
+
+            <ng-container *ngIf="col.field == 'publishedAt'">
+              {{ poem[col.field] | date:'dd/MM/yyyy'}}
+            </ng-container>
+
+            <ng-container *ngIf="col.field === 'coverImageUrl'">
+              <img [src]="poem.coverImageUrl" alt="coverImage" width="80" height="80" class="shadow-4">
+            </ng-container>
+  
+            <ng-container *ngIf="col.field === 'Actions'">
+              <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2"
+                (click)="editPoem(poem)"></button>
+              <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning"
+                (click)="deletePoem(poem)"></button>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+  
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8">No poems found.</td>
+        </tr>
+      </ng-template>
+  
+    </p-table>
+  
+    <p-confirmDialog [style]="{ width: '40vw' }" position="center"></p-confirmDialog>
+  
+  </div>
+  
+
+  <p-dialog [(visible)]="poemDialog" [style]="{ width: '800px', height: 'auto' }" header="Poem Details" styleClass="p-fluid">
+    <form [formGroup]="poemForm" (ngSubmit)="savePoem()">
+  
+      <!-- Title Field (Required) -->
+      <div class="field">
+        <label for="Title">Title <span class="text-red-500">*</span></label>
+        <input type="text" pInputText formControlName="title" />
+        <small class="p-error" *ngIf="poemForm.get('title')?.invalid && poemForm.get('title')?.touched">
+          Title is required.
+        </small>
+      </div>
+  
+      <!-- Read Count, Reading Time, and Rating on the Same Row (Required) -->
+      <div class="formgrid grid">
+        
+
+        <div class="field col-6">
+          <label for="ReadingTime">Reading Time (minutes) <span class="text-red-500">*</span></label>
+          <input type="number" pInputText formControlName="readingTime" />
+          <small class="p-error" *ngIf="poemForm.get('readingTime')?.invalid && poemForm.get('readingTime')?.touched">
+            Reading time is required.
+          </small>
+        </div>
+
+
+        <!-- Categories Field (Required) -->
+        <div class="field col-6">
+            <label for="Categories">Categories <span class="text-red-500">*</span></label>
+          <input type="text" pInputText formControlName="categories" />
+          <small class="p-error" *ngIf="poemForm.get('categories')?.invalid && poemForm.get('categories')?.touched">
+            Categories are required.
+          </small>
+          </div>
+      </div>
+
+      
+  
+      <!-- Large Fields for Background, Summary, and Lines (Optional) -->
+      <div class="field">
+        <label for="Background">Background</label>
+        <textarea pInputTextarea formControlName="background" rows="6" cols="30"></textarea>
+      </div>
+  
+      <div class="field">
+        <label for="Summary">Summary</label>
+        <textarea pInputTextarea formControlName="summary" rows="4" cols="30"></textarea>
+      </div>
+  
+      <div class="field">
+        <label for="Lines">Poem <span class="text-red-500">*</span></label>
+        <textarea pInputTextarea formControlName="lines" rows="8" cols="30"></textarea>
+        <small class="p-error" *ngIf="poemForm.get('lines')?.invalid && poemForm.get('lines')?.touched">
+          Poem content is required.
+        </small>
+      </div>
+
+      <div class="formgrid grid">
+        <!-- Author Id Field (Required) -->
+        <div class="field col-6">
+          <label for="authorName">Author Name <span class="text-red-500">*</span></label>
+          <input type="number" pInputText formControlName="authorName" />
+          <small class="p-error" *ngIf="poemForm.get('authorName')?.invalid && poemForm.get('authorName')?.touched">
+            author Name is required.
+          </small>
+        </div>
+
+        <!-- Published At (Required) -->
+        <div class="field col-6">
+          <label for="PublishedAt">Published At <span class="text-red-500">*</span></label>
+        <p-calendar formControlName="publishedAt" dateFormat="dd-mm-yy" [showIcon]="true"></p-calendar>
+        <small class="p-error" *ngIf="poemForm.get('publishedAt')?.invalid && poemForm.get('publishedAt')?.touched">
+          Published date is required.
+        </small>
+        </div>
+      </div>
+
+      <!-- Cover Image URL (Required) -->
+      <div class="field">
+        <label for="CoverImageUrl">Cover Image URL <span class="text-red-500">*</span></label>
+        <input type="text" pInputText formControlName="coverImageUrl" />
+        <small class="p-error" *ngIf="poemForm.get('coverImageUrl')?.invalid && poemForm.get('coverImageUrl')?.touched">
+          Cover image URL is required.
+        </small>
+      </div>
+
+  
+      <!-- Buttons (Aligned to Right) -->
+      <div class="p-dialog-footer" style="text-align: right;">
+        <button pButton pRipple label="Cancel" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" [disabled]="poemForm.invalid" class="p-button-text" type="submit"
+        ></button>
+      </div>
+  
+    </form>
+  </p-dialog>

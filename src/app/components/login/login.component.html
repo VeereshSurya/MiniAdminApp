@@ -1,0 +1,34 @@
+<section id="login">
+    <div class="container">
+        <div class="row d-flex flex-column justify-content-center align-items-center">
+            <div class="col-5 card login-card">
+                <h2 class="text-center">Login</h2>
+                <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            [(ngModel)]="username" 
+                            placeholder="Enter your username" 
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            [(ngModel)]="password" 
+                            placeholder="Enter your password" 
+                            required>
+                    </div>
+                    <button type="submit" [disabled]="!username || !password" class="btn btn-primary w-100">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
