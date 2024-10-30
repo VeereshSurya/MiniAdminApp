@@ -1,58 +1,37 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ConfirmationService, Header, MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Poem } from 'src/app/models/poem';
 import { PoemService } from 'src/app/services/poem.service';
-
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   providers: [MessageService, ConfirmationService],
-  encapsulation: ViewEncapsulation.None // Disable encapsulation styles conflicts
+  encapsulation: ViewEncapsulation.None // Disable encapsulation to prevent style conflicts
 })
 export class AdminComponent {
+  poemForm: FormGroup = new FormGroup({}); // Form for creating/editing poems
+  poems!: Poem[]; // List of poems
+  loading: boolean = true; // Loading state for data fetching
+  poemDialog: boolean = false; // Control dialog visibility
+  submitted: boolean = false; // Track form submission status
+  poem!: Poem; // Current poem being edited or created
+  isEditMode: boolean = false; // Track if in edit mode
 
-  poemForm: FormGroup = new FormGroup({});
-  poems!: Poem[];
-  loading: boolean = true;
-  poemDialog: boolean = false;
-  submitted: boolean = false;
-  poem!: Poem;
-  isEditMode: boolean = false;
+  today: Date = new Date(); // Current date
 
-  today: Date = new Date();
-
+  // Columns configuration for the poem table
   columns: any[] = [
-    { field: 'Actions', Header: 'Actions', width: '150px', sortable: false },
+    { field: 'Actions', header: 'Actions', width: '150px', sortable: false },
     { field: 'poemId', header: 'Id', width: '100px', sortable: true },
     { field: 'title', header: 'Title', width: '200px', sortable: true },
-    {
-      field: 'readingTime',
-      header: 'Time',
-      sortable: false,
-    },
-  
-    {
-      field: 'categories',
-      header: 'Categories',
-      width: '200px',
-      sortable: false,
-    },
-    { field: 'authorName', header: 'Author', with: '200px', sortable: false },
-    {
-      field: 'publishedAt',
-      header: 'Published Date',
-      width: '150px',
-      sortable: true,
-    },
-    {
-      field: 'coverImageUrl',
-      header: 'Image',
-      width: '150px',
-      sortable: false,
-    }
+    { field: 'readingTime', header: 'Time', sortable: false },
+    { field: 'categories', header: 'Categories', width: '200px', sortable: false },
+    { field: 'authorName', header: 'Author', width: '200px', sortable: false },
+    { field: 'publishedAt', header: 'Published Date', width: '150px', sortable: true },
+    { field: 'coverImageUrl', header: 'Image', width: '150px', sortable: false },
   ];
 
   constructor(
@@ -63,9 +42,10 @@ export class AdminComponent {
   ) {}
 
   ngOnInit(): void {
-    this.loading = false;
-    this.getAllPoems();
+    this.loading = false; // Set loading to false
+    this.getAllPoems(); // Fetch all poems on initialization
 
+    // Initialize the poem form with validation
     this.poemForm = this.formBuilder.group({
       poemId: [null],
       title: ['', Validators.required],
@@ -80,10 +60,11 @@ export class AdminComponent {
     });
   }
 
+  // Fetch all poems from the service
   getAllPoems(): void {
     this.poemService.getAllPoems().subscribe({
       next: (response) => {
-        this.poems = response;
+        this.poems = response; // Assign fetched poems to the local variable
       },
       error: (err) => {
         console.error('Error in fetching the poems', err);
@@ -91,22 +72,24 @@ export class AdminComponent {
     });
   }
 
+  // Open dialog for adding a new poem
   openNew() {
-    this.poem = {poemId : 0};
-    this.submitted = false;
-    this.poemDialog = true;
+    this.poem = { poemId: 0 }; // Reset poem object
+    this.submitted = false; // Reset submitted status
+    this.poemDialog = true; // Show the dialog
   }
 
+  // Hide the poem dialog
   hideDialog() {
-    this.poemDialog = false;
-    this.submitted = false;
-    this.poem = {poemId: 0};
+    this.poemDialog = false; // Close the dialog
+    this.submitted = false; // Reset submitted status
+    this.poem = { poemId: 0 }; // Reset poem object
   }
 
-  // Edit poem: populate form with the selected poem's data
+  // Edit a selected poem and populate the form
   editPoem(poem: Poem) {
-    this.poemDialog = true;
-    this.isEditMode = true;
+    this.poemDialog = true; // Show the dialog
+    this.isEditMode = true; // Set to edit mode
     const poemWithDate = {
       ...poem,
       publishedAt: poem.publishedAt ? new Date(poem.publishedAt) : null,
@@ -118,36 +101,36 @@ export class AdminComponent {
   // Handle form submission (create or update)
   savePoem() {
     if (this.poemForm.valid) {
-      let newPoem = this.poemForm.value;
-      var result;
+      let newPoem = this.poemForm.value; // Get form values
       if (this.isEditMode) {
+        // Update existing poem
         this.poemService.updatePoem(newPoem.poemId, newPoem).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
-              detail: 'Product Updated',
+              detail: 'Poem Updated',
               life: 3000,
             });
 
             console.log('Poem Updated successfully');
             this.isEditMode = false; // Exit edit mode
-            this.poemDialog = false;
+            this.poemDialog = false; // Close dialog
             this.poemForm.reset(); // Reset the form
             this.getAllPoems(); // Refresh the list
           },
-
           error: (err) => {
             console.error('Error in updating the poem', err);
             this.messageService.add({
               severity: 'error',
               summary: 'Failure',
               detail: 'Poem update operation failed',
-              life: 3000, // Duration of the toast in milliseconds
+              life: 3000,
             });
           },
         });
       } else {
+        // Create new poem
         this.poemService.createNewPoem(newPoem).subscribe({
           next: () => {
             console.log('Poem created successfully');
@@ -159,27 +142,26 @@ export class AdminComponent {
               life: 3000,
             });
 
-            this.poemDialog = false;
+            this.poemDialog = false; // Close dialog
             this.poemForm.reset(); // Reset the form
             this.getAllPoems(); // Refresh the list
           },
           error: (err) => {
             console.error('Error creating poem:', err);
-
             this.messageService.add({
               severity: 'error',
               summary: 'Failure',
-              detail: 'Error occured while creating poem',
-              life: 3000, // Duration of the toast in milliseconds
+              detail: 'Error occurred while creating poem',
+              life: 3000,
             });
           },
         });
       }
-      this.poem = {poemId: 0};
+      this.poem = { poemId: 0 }; // Reset poem object
     }
   }
 
-  // Delete a poem
+  // Delete a selected poem
   deletePoem(poem: Poem) {
     this.confirmationService.confirm({
       message: 'Are you sure, you want to delete ' + poem.title + ' ?',
@@ -194,18 +176,17 @@ export class AdminComponent {
               detail: 'Poem Deleted successfully',
               life: 3000,
             });
-            this.poem = {poemId: 0};
+            this.poem = { poemId: 0 }; // Reset poem object
             console.log('Poem deleted successfully');
             this.getAllPoems(); // Refresh the list after deletion
           },
-
           error: (err) => {
             console.error('Error deleting poem:', err);
             this.messageService.add({
               severity: 'error',
               summary: 'Failure',
               detail: 'Error deleting poem',
-              life: 3000, // Duration of the toast in milliseconds
+              life: 3000,
             });
           },
         });

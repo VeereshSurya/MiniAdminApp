@@ -2,10 +2,10 @@
 
   <p-toast [position]="'top-center'"></p-toast>
 
-  <p-table #dt [columns]="columns" [value]="poems" [rowHover]="true" [paginator]="true" [rows]="5"
+  <p-table #dt [columns]="columns" [value]="poems" [rowHover]="true" [paginator]="true" [rows]="20"
     [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-    [rowsPerPageOptions]="[5, 10, 20]" [loading]="loading" dataKey="Name" [scrollable]="true" 
-    [resizableColumns]="true" columnResizeMode="expand" [tableStyle]="{ 'min-width': '50rem'}">
+    [rowsPerPageOptions]="[5, 10, 20]" [loading]="loading" dataKey="Name" [scrollable]="true" scrollHeight="520px"
+    [resizableColumns]="true" columnResizeMode="expand" [tableStyle]="{ 'min-width': '50rem', 'min-height': '520px'}">
 
 
     <ng-template pTemplate="caption">

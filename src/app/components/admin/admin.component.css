@@ -4,7 +4,6 @@
 @import 'primeflex/primeflex.css';
 @import 'primeicons/primeicons.css';
 
-
 /* Global font size for PrimeNG components */
 .p-component {
     font-size: 0.9rem;
@@ -13,6 +12,7 @@
 /* Table Container Styling */
 .card {
     padding: 0.7rem 0.3rem;
+    padding-bottom: 0px;
     background-color: #f9f9f9;
     border-radius: 8px;
 }
@@ -67,6 +67,18 @@ img {
     padding: 2px;
 }
 
+
+/* Paginator */
+
+.p-paginator {
+    background: #e9f3fd;
+    color: #6c757d;
+    border: solid #e9ecef;
+    border-width: 0;
+    padding: 0.3rem 0rem;
+    border-radius: 6px;
+}
+
 /* Dialog Box Styling */
 
 /* Dialog Header Padding */
@@ -98,30 +110,35 @@ img {
 
 /* Scrollbar Styling for Dialog and Input Fields */
 
-/* Scrollbar Dimensions for Dialog Content and Input Fields */
+/* Scrollbar Dimensions for Dialog Content, Input Fields, and Table Wrapper */
 .p-dialog .p-dialog-content::-webkit-scrollbar,
-.p-inputtext::-webkit-scrollbar {
+.p-inputtext::-webkit-scrollbar,
+.p-datatable-scrollable > .p-datatable-wrapper::-webkit-scrollbar {
     width: 6px; /* Adjust width as needed */
     height: 6px; /* Adjust height for horizontal scrollbars if needed */
 }
 
-/* Scrollbar Thumb Styling for Dialog Content and Input Fields */
+/* Scrollbar Thumb Styling for Dialog Content, Input Fields, and Table Wrapper */
 .p-dialog .p-dialog-content::-webkit-scrollbar-thumb,
-.p-inputtext::-webkit-scrollbar-thumb {
+.p-inputtext::-webkit-scrollbar-thumb,
+.p-datatable-scrollable > .p-datatable-wrapper::-webkit-scrollbar-thumb {
     background-color: #c0c0c0; /* Color of the scrollbar thumb */
     border-radius: 3px;
 }
 
-/* Scrollbar Thumb Hover Effect for Dialog Content and Input Fields */
+/* Scrollbar Thumb Hover Effect for Dialog Content, Input Fields, and Table Wrapper */
 .p-dialog .p-dialog-content::-webkit-scrollbar-thumb:hover,
-.p-inputtext::-webkit-scrollbar-thumb:hover {
+.p-inputtext::-webkit-scrollbar-thumb:hover,
+.p-datatable-scrollable > .p-datatable-wrapper::-webkit-scrollbar-thumb:hover {
     background-color: #a0a0a0; /* Color on hover */
 }
 
-/* Scrollbar Track Styling for Dialog Content and Input Fields */
+/* Scrollbar Track Styling for Dialog Content, Input Fields, and Table Wrapper */
 .p-dialog .p-dialog-content::-webkit-scrollbar-track,
-.p-inputtext::-webkit-scrollbar-track {
+.p-inputtext::-webkit-scrollbar-track,
+.p-datatable-scrollable > .p-datatable-wrapper::-webkit-scrollbar-track {
     background-color: #f1f1f1; /* Track color */
     border-radius: 3px;
 }
+
 
