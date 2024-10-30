@@ -4,10 +4,6 @@ import { ConfirmationService, Header, MessageService } from 'primeng/api';
 import { Poem } from 'src/app/models/poem';
 import { PoemService } from 'src/app/services/poem.service';
 
-interface ExportColumn {
-  title: string;
-  dataKey: string;
-}
 
 @Component({
   selector: 'app-admin',
@@ -20,53 +16,43 @@ export class AdminComponent {
 
   poemForm: FormGroup = new FormGroup({});
   poems!: Poem[];
-
-  exportColumns!: ExportColumn[];
-
-  selectedPoems!: Poem[];
-
   loading: boolean = true;
-
   poemDialog: boolean = false;
-
   submitted: boolean = false;
-
   poem!: Poem;
-
   isEditMode: boolean = false;
 
   today: Date = new Date();
 
   columns: any[] = [
     { field: 'Actions', Header: 'Actions', width: '150px', sortable: false },
-    { field: 'poemId', header: 'Poem Id', width: '100px', sortable: true },
+    { field: 'poemId', header: 'Id', width: '100px', sortable: true },
     { field: 'title', header: 'Title', width: '200px', sortable: true },
     {
-      field: 'coverImageUrl',
-      header: 'Cover Image',
-      width: '150px',
-      sortable: false,
-    },
-    {
       field: 'readingTime',
-      header: 'Time Required',
-      width: '250px',
+      header: 'Time',
       sortable: false,
     },
   
     {
       field: 'categories',
       header: 'Categories',
-      width: '300px',
+      width: '200px',
       sortable: false,
     },
-    { field: 'authorName', header: 'Author Name', with: '200px', sortable: false },
+    { field: 'authorName', header: 'Author', with: '200px', sortable: false },
     {
       field: 'publishedAt',
-      header: 'Published At',
+      header: 'Published Date',
       width: '150px',
       sortable: true,
     },
+    {
+      field: 'coverImageUrl',
+      header: 'Image',
+      width: '150px',
+      sortable: false,
+    }
   ];
 
   constructor(
@@ -78,12 +64,6 @@ export class AdminComponent {
 
   ngOnInit(): void {
     this.loading = false;
-
-    this.exportColumns = this.columns.map((col) => ({
-      title: col.header,
-      dataKey: col.field,
-    }));
-
     this.getAllPoems();
 
     this.poemForm = this.formBuilder.group({
@@ -103,7 +83,7 @@ export class AdminComponent {
   getAllPoems(): void {
     this.poemService.getAllPoems().subscribe({
       next: (response) => {
-        this.poems = response.data;
+        this.poems = response;
       },
       error: (err) => {
         console.error('Error in fetching the poems', err);
@@ -120,6 +100,7 @@ export class AdminComponent {
   hideDialog() {
     this.poemDialog = false;
     this.submitted = false;
+    this.poem = {poemId: 0};
   }
 
   // Edit poem: populate form with the selected poem's data
@@ -231,22 +212,4 @@ export class AdminComponent {
       },
     });
   }
-
-  // back end API will not implemented yet.
-  deleteSelectedPoems() {
-    this.confirmationService.confirm({
-      message: 'Are you sure you want to delete the selected employees',
-      header: 'Confirm',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Successfull',
-          detail: 'Poem deleted',
-          life: 3000,
-        });
-      },
-    });
-  }
-
 }
