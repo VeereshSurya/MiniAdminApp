@@ -1,0 +1,9 @@
+[build]
+# Remove or leave 'base' as empty since project-folder is the root in the repo
+command = "npm run build:prod"
+publish = "dist/"  # Keep this as 'dist/' because it's relative to the root of your project in the repo
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
