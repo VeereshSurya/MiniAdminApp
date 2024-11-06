@@ -8,7 +8,7 @@ import { Poem } from '../models/poem';
 })
 export class PoemService {
   // Base API URL for poem-related operations
-  private apiUrl = 'https://localhost:7072/api';
+  private apiUrl = 'https://poemapi-h4hth3arageegjcw.canadacentral-01.azurewebsites.net/api';
 
   // HTTP options for requests, setting the Content-Type to JSON
   private httpOptions = {
